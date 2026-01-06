@@ -1,0 +1,2 @@
+/home/monkeystone/rasp/chat_cpp_server/build/CMakeFiles/edit_cache.dir
+/home/monkeystone/rasp/chat_cpp_server/build/CMakeFiles/rebuild_cache.dir
