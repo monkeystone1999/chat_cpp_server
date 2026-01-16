@@ -1,3 +1,4 @@
+#include "server.h"
 #include <iostream>
 
 int main(int argc, char **argv) {
@@ -7,7 +8,7 @@ int main(int argc, char **argv) {
   }
   try {
     unsigned short port = atoi(argv[1]);
-    Server chatServer(port);
+    Server chatServer();
     chatServer.run();
   } catch (const std::exception e) {
     fprintf(stderr, "Error : %s\n", e.what());
