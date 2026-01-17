@@ -10,7 +10,12 @@
 #include <unistd.h>
 #include <vector>
 
-template <typename T> class ThreadPool {
+struct TaskFunc {
+  virtual void run() = 0;
+  virtual ~TaskFunc() = default;
+};
+
+class ThreadPool {
 public:
   ThreadPool(size_t threads) : stop(false) {
     event_fd = eventfd(0, EFD_SEMAPHORE);
@@ -21,10 +26,10 @@ public:
       workers.emplace_back(&ThreadPool::worker_thread, this);
     }
   }
-  void enqueue(std::function<T> task) {
+  void enqueue(std::unique_ptr<TaskFunc> taskfunc) {
     {
       std::lock_guard<std::mutex> lock(queue_mutex);
-      tasks.push(task);
+      tasks.push(std::move(taskfunc));
     }
     uint64_t value = 1;
     // 워커 스레드 깨우기
@@ -61,24 +66,24 @@ private:
       if (stop) { // 종료 확인
         return;
       }
-      std::function<T> task;
+      std::unique_ptr<TaskFunc> task;
       bool has_task = false;
       {
         std::lock_guard<std::mutex> lock(queue_mutex);
         if (!tasks.empty()) {
-          task = tasks.front();
+          task = std::move(tasks.front());
           tasks.pop();
           has_task = true;
         }
       }
       if (has_task) {
-        task();
+        task->run();
       }
     }
   }
 
   std::vector<std::thread> workers;
-  std::queue<std::function<T>> tasks;
+  std::queue<std::unique_ptr<TaskFunc>> tasks;
   std::mutex queue_mutex;
   std::atomic<bool> stop;
   int event_fd;

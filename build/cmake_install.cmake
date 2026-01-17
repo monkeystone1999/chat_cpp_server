@@ -1,4 +1,4 @@
-# Install script for directory: /home/monkeystone/rasp/chat_cpp_server
+# Install script for directory: /home/monkeytone/semi_project/chat_cpp_server
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/monkeystone/rasp/chat_cpp_server/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/monkeytone/semi_project/chat_cpp_server/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

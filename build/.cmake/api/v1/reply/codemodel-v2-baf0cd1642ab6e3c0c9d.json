@@ -1,0 +1,87 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "ChatServer",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ChatServer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ChatServer-Debug-66da9ce8b8ff5645697f.json",
+					"name" : "ChatServer",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Crypt::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Crypt-Debug-3c50a517e0c363c8df1e.json",
+					"name" : "Crypt",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Network::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Network-Debug-879f4f25e62b37ea62df.json",
+					"name" : "Network",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ThreadPool::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ThreadPool-Debug-e3875bde1be5c3bd5229.json",
+					"name" : "ThreadPool",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/monkeytone/semi_project/chat_cpp_server/build",
+		"source" : "/home/monkeytone/semi_project/chat_cpp_server"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

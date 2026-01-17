@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/monkeytone/semi_project/chat_cpp_server/build",
+  "command": "/usr/bin/c++ -DNetwork_EXPORTS -I/home/monkeytone/semi_project/chat_cpp_server/inc -I/home/monkeytone/semi_project/chat_cpp_server/src -g -std=gnu++20 -fPIC -Wall -Wextra -Werror -o CMakeFiles/Network.dir/src/network/network.cpp.o -c /home/monkeytone/semi_project/chat_cpp_server/src/network/network.cpp",
+  "file": "/home/monkeytone/semi_project/chat_cpp_server/src/network/network.cpp",
+  "output": "CMakeFiles/Network.dir/src/network/network.cpp.o"
+},
+{
+  "directory": "/home/monkeytone/semi_project/chat_cpp_server/build",
+  "command": "/usr/bin/c++ -DThreadPool_EXPORTS -I/home/monkeytone/semi_project/chat_cpp_server/inc -I/home/monkeytone/semi_project/chat_cpp_server/src -g -std=gnu++20 -fPIC -Wall -Wextra -Werror -o CMakeFiles/ThreadPool.dir/src/thread_pool/thread_pool.cpp.o -c /home/monkeytone/semi_project/chat_cpp_server/src/thread_pool/thread_pool.cpp",
+  "file": "/home/monkeytone/semi_project/chat_cpp_server/src/thread_pool/thread_pool.cpp",
+  "output": "CMakeFiles/ThreadPool.dir/src/thread_pool/thread_pool.cpp.o"
+},
+{
+  "directory": "/home/monkeytone/semi_project/chat_cpp_server/build",
+  "command": "/usr/bin/c++ -DCrypt_EXPORTS -I/home/monkeytone/semi_project/chat_cpp_server/inc -I/home/monkeytone/semi_project/chat_cpp_server/src -g -std=gnu++20 -fPIC -Wall -Wextra -Werror -o CMakeFiles/Crypt.dir/src/crypt/crypt.cpp.o -c /home/monkeytone/semi_project/chat_cpp_server/src/crypt/crypt.cpp",
+  "file": "/home/monkeytone/semi_project/chat_cpp_server/src/crypt/crypt.cpp",
+  "output": "CMakeFiles/Crypt.dir/src/crypt/crypt.cpp.o"
+},
+{
+  "directory": "/home/monkeytone/semi_project/chat_cpp_server/build",
+  "command": "/usr/bin/c++  -I/home/monkeytone/semi_project/chat_cpp_server/inc -I/home/monkeytone/semi_project/chat_cpp_server/src -g -std=gnu++20 -Wall -Wextra -Werror -o CMakeFiles/ChatServer.dir/src/core.cpp.o -c /home/monkeytone/semi_project/chat_cpp_server/src/core.cpp",
+  "file": "/home/monkeytone/semi_project/chat_cpp_server/src/core.cpp",
+  "output": "CMakeFiles/ChatServer.dir/src/core.cpp.o"
+},
+{
+  "directory": "/home/monkeytone/semi_project/chat_cpp_server/build",
+  "command": "/usr/bin/c++  -I/home/monkeytone/semi_project/chat_cpp_server/inc -I/home/monkeytone/semi_project/chat_cpp_server/src -g -std=gnu++20 -Wall -Wextra -Werror -o CMakeFiles/ChatServer.dir/src/server.cpp.o -c /home/monkeytone/semi_project/chat_cpp_server/src/server.cpp",
+  "file": "/home/monkeytone/semi_project/chat_cpp_server/src/server.cpp",
+  "output": "CMakeFiles/ChatServer.dir/src/server.cpp.o"
+}
+]

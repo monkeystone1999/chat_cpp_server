@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g -shared -Wl,-soname,libNetwork.so -o libNetwork.so CMakeFiles/Network.dir/src/network/network.cpp.o 
