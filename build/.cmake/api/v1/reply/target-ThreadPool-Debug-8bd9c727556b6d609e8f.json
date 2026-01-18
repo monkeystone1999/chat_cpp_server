@@ -74,11 +74,11 @@
 			[
 				{
 					"backtrace" : 3,
-					"path" : "/home/monkeytone/semi_project/chat_cpp_server/inc"
+					"path" : "/home/monkeystone/rasp/SemiProject/chat_cpp_server/inc"
 				},
 				{
 					"backtrace" : 3,
-					"path" : "/home/monkeytone/semi_project/chat_cpp_server/src"
+					"path" : "/home/monkeystone/rasp/SemiProject/chat_cpp_server/src"
 				}
 			],
 			"language" : "CXX",

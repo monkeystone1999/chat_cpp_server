@@ -2,6 +2,9 @@
 #include <algorithm>
 #include <iostream>
 
+// static 멤버 변수 정의 및 nullptr 초기화
+Network* Network::net = nullptr;
+
 int Network::addUDP(size_t port) {
   auto find = std::find(udp_ports.begin(), udp_ports.end(), port);
   if (find != udp_ports.end()) {
@@ -32,22 +35,22 @@ int Network::addTCP(size_t port) {
   return 0;
 }
 
-std::vector<int> Network::alloc_sock_tcp(const std::vector<size_t> &tcp_ports) {
+std::vector<int> Network::alloc_sock_tcp(size_t size) {
   std::vector<int> fd;
-  for (const auto &ele : tcp_ports) {
-    int res = socket(AF_INET, SOCK_STREAM, 0);
+  for (int i = 0; i < static_cast<int>(size); ++i) {
+    int res = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     if (res < 0) {
-      std::cerr << "TCP Socker create Fail" << std::endl;
+      std::cerr << "TCP Socket create Fail" << std::endl;
       exit(0);
     }
     fd.emplace_back(res);
   }
   return fd;
 }
-std::vector<int> Network::alloc_sock_udp(const std::vector<size_t> &udp_ports) {
+std::vector<int> Network::alloc_sock_udp(size_t size) {
   std::vector<int> fd;
-  for (const auto &ele : udp_ports) {
-    int res = socket(AF_INET, SOCK_DGRAM, 0);
+  for (int i = 0; i < static_cast<int>(size); ++i) {
+    int res = socket(AF_INET, SOCK_DGRAM | SOCK_NONBLOCK, 0);
     if (res < 0) {
       std::cerr << "UDP Socket create Fail" << std::endl;
       exit(0);
@@ -57,14 +60,14 @@ std::vector<int> Network::alloc_sock_udp(const std::vector<size_t> &udp_ports) {
   return fd;
 }
 int Network::init() {
-  tcp_fds = alloc_sock_tcp(tcp_ports);
-  udp_fds = alloc_sock_udp(udp_ports);
+  tcp_fds = alloc_sock_tcp(tcp_ports.size());
+  udp_fds = alloc_sock_udp(udp_ports.size());
   epfd = epoll_create1(0);
   struct sockaddr_in server_addr_in;
   struct epoll_event ev;
   ev.events = EPOLLIN;
   int reuse = 1;
-  for (int i = 0; i < tcp_fds.size(); ++i) {
+  for (int i = 0; i < static_cast<int>(tcp_fds.size()); ++i) {
     memset(&server_addr_in, 0, sizeof(server_addr_in));
     server_addr_in.sin_addr.s_addr = htonl(INADDR_ANY);
     server_addr_in.sin_family = AF_INET;
@@ -82,7 +85,7 @@ int Network::init() {
     ev.data.fd = tcp_fds[i];
     epoll_ctl(epfd, EPOLL_CTL_ADD, tcp_fds[i], &ev);
   }
-  for (int i = 0; i < udp_fds.size(); ++i) {
+  for (int i = 0; i < static_cast<int>(udp_fds.size()); ++i) {
     memset(&server_addr_in, 0, sizeof(server_addr_in));
     server_addr_in.sin_addr.s_addr = htonl(INADDR_ANY);
     server_addr_in.sin_family = AF_INET;
@@ -96,5 +99,10 @@ int Network::init() {
     ev.data.fd = udp_fds[i];
     epoll_ctl(epfd, EPOLL_CTL_ADD, udp_fds[i], &ev);
   }
+  return 0;
+}
+
+int Network::send(const std::string &msg, int fd) {
+  write(fd, msg.data(), msg.size());
   return 0;
 }

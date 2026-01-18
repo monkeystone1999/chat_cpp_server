@@ -10,6 +10,11 @@
 #include <unistd.h>
 #include <vector>
 
+template <typename T>
+concept Task = requires(T t) {
+  { t.ThrowWork() } -> std::same_as<void>;
+};
+
 struct TaskFunc {
   virtual void run() = 0;
   virtual ~TaskFunc() = default;
@@ -17,6 +22,8 @@ struct TaskFunc {
 
 class ThreadPool {
 public:
+  // 생성자: 스레드 풀을 초기화하고 지정된 수만큼의 워커 스레드를 생성하여 대기
+  // 상태로 만듭니다.
   ThreadPool(size_t threads) : stop(false) {
     event_fd = eventfd(0, EFD_SEMAPHORE);
     if (event_fd == -1) {
@@ -26,10 +33,15 @@ public:
       workers.emplace_back(&ThreadPool::worker_thread, this);
     }
   }
-  void enqueue(std::unique_ptr<TaskFunc> taskfunc) {
+  // 작업을 스레드 풀의 작업 큐에 등록합니다.
+  // 인자로 전달된 Task 객체는 std::unique_ptr로 관리되며, 소유권이 이동됩니다.
+  // 작업 등록 후에는 대기 중인 워커 스레드 중 하나를 깨워 작업을 처리하게
+  // 합니다. usage : std::unique_ptr<Task> someFunc =
+  // std::make_unique<custom>(); threadPool.enqueue(std::move(someFunc))
+  template <Task T> void enqueue(std::unique_ptr<T> ThrowWork) {
     {
       std::lock_guard<std::mutex> lock(queue_mutex);
-      tasks.push(std::move(taskfunc));
+      tasks.push([t = std::move(ThrowWork)]() mutable { t->ThrowWork(); });
     }
     uint64_t value = 1;
     // 워커 스레드 깨우기
@@ -39,6 +51,7 @@ public:
     }
   }
 
+  // 소멸자: 스레드 풀 운영을 중단하고 모든 워커 스레드를 안전하게 종료합니다.
   ~ThreadPool() {
     stop = true;
     for (size_t i = 0; i < workers.size();
@@ -55,6 +68,9 @@ public:
   }
 
 private:
+  // 워커 스레드가 실행하는 루프 함수입니다.
+  // 작업 큐에 작업이 들어올 때까지 대기(sleep)하다가, 작업이 들어오면 깨어나서
+  // 처리를 수행합니다.
   void worker_thread() {
     while (true) {
       uint64_t value;
@@ -66,7 +82,7 @@ private:
       if (stop) { // 종료 확인
         return;
       }
-      std::unique_ptr<TaskFunc> task;
+      std::function<void()> task;
       bool has_task = false;
       {
         std::lock_guard<std::mutex> lock(queue_mutex);
@@ -77,13 +93,13 @@ private:
         }
       }
       if (has_task) {
-        task->run();
+        task();
       }
     }
   }
 
   std::vector<std::thread> workers;
-  std::queue<std::unique_ptr<TaskFunc>> tasks;
+  std::queue<std::function<void()>> tasks;
   std::mutex queue_mutex;
   std::atomic<bool> stop;
   int event_fd;

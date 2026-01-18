@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/monkeytone/semi_project/chat_cpp_server/inc -I/home/monkeytone/semi_project/chat_cpp_server/src
+CXX_INCLUDES = -I/home/monkeystone/rasp/SemiProject/chat_cpp_server/inc -I/home/monkeystone/rasp/SemiProject/chat_cpp_server/src
 
 CXX_FLAGS = -g -std=gnu++20 -Wall -Wextra -Werror
 

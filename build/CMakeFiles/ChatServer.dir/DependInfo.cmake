@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/monkeytone/semi_project/chat_cpp_server/src/core.cpp" "CMakeFiles/ChatServer.dir/src/core.cpp.o" "gcc" "CMakeFiles/ChatServer.dir/src/core.cpp.o.d"
-  "/home/monkeytone/semi_project/chat_cpp_server/src/server.cpp" "CMakeFiles/ChatServer.dir/src/server.cpp.o" "gcc" "CMakeFiles/ChatServer.dir/src/server.cpp.o.d"
+  "/home/monkeystone/rasp/SemiProject/chat_cpp_server/src/core.cpp" "CMakeFiles/ChatServer.dir/src/core.cpp.o" "gcc" "CMakeFiles/ChatServer.dir/src/core.cpp.o.d"
+  "/home/monkeystone/rasp/SemiProject/chat_cpp_server/src/server.cpp" "CMakeFiles/ChatServer.dir/src/server.cpp.o" "gcc" "CMakeFiles/ChatServer.dir/src/server.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.
