@@ -1,6 +1,0 @@
-/home/monkeystone/rasp/SemiProject/chat_cpp_server/build/CMakeFiles/Network.dir
-/home/monkeystone/rasp/SemiProject/chat_cpp_server/build/CMakeFiles/ThreadPool.dir
-/home/monkeystone/rasp/SemiProject/chat_cpp_server/build/CMakeFiles/Crypt.dir
-/home/monkeystone/rasp/SemiProject/chat_cpp_server/build/CMakeFiles/ChatServer.dir
-/home/monkeystone/rasp/SemiProject/chat_cpp_server/build/CMakeFiles/edit_cache.dir
-/home/monkeystone/rasp/SemiProject/chat_cpp_server/build/CMakeFiles/rebuild_cache.dir

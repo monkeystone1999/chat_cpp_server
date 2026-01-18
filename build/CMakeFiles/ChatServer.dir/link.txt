@@ -1,1 +1,0 @@
-/usr/bin/c++ -g CMakeFiles/ChatServer.dir/src/core.cpp.o CMakeFiles/ChatServer.dir/src/server.cpp.o -o ChatServer  -Wl,-rpath,/home/monkeystone/rasp/SemiProject/chat_cpp_server/build libNetwork.so libThreadPool.so libCrypt.so 

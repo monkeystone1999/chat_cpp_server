@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -g -shared -Wl,-soname,libCrypt.so -o libCrypt.so CMakeFiles/Crypt.dir/src/crypt/crypt.cpp.o  -lOpenSSL 
