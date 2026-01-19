@@ -1,4 +1,4 @@
-#include "server.h"
+#include "server.hpp"
 #include <iostream>
 
 int main(int argc, char **argv) {
@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
     return 0;
   }
   try {
-    unsigned short port = atoi(argv[1]);
+    //    unsigned short port = static_cast<unsigned short>(atoi(argv[1]));
     Server chatServer;
     chatServer.run();
   } catch (const std::exception e) {

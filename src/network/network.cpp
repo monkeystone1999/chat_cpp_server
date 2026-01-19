@@ -102,7 +102,26 @@ int Network::init() {
   return 0;
 }
 
-int Network::send(const std::string &msg, int fd) {
-  write(fd, msg.data(), msg.size());
-  return 0;
+
+std::string Network::read(int fd){
+  char buffer[1024];
+  ssize_t size = ::read(fd, buffer, 1024);
+  if (size < 0) return "";
+  return std::string(buffer, size);
+}
+
+int Network::write(const std::string msg, int fd){
+  return ::write(fd, msg.c_str(), msg.size());
+}
+
+std::string Network::recvfrom(int fd, struct sockaddr_in &dest_addr) {
+  char buffer[4096];
+  socklen_t addr_len = sizeof(dest_addr);
+  ssize_t size = ::recvfrom(fd, buffer, sizeof(buffer), 0, (struct sockaddr*)&dest_addr, &addr_len);
+  if (size < 0) return "";
+  return std::string(buffer, size);
+}
+
+int Network::sendto(int fd, const std::string &msg, const struct sockaddr_in &src_addr) {
+  return ::sendto(fd, msg.c_str(), msg.size(), 0, (struct sockaddr*)&src_addr, sizeof(src_addr));
 }

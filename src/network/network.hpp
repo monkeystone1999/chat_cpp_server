@@ -18,16 +18,15 @@
 // onAccept: TCP 클라이언트 접속 시 호출 (로그인/등록용)
 // onRead: TCP 클라이언트 데이터 수신 시 호출
 // onUDP: UDP 데이터 수신 시 호출 (채팅 메시지용)
-// onDisconnect: 클라이언트 연결 종료 시 호출
+class Network;
 template <typename T>
 concept SessionManager =
     requires(T t, int sock, const std::string &ip, const char *data, size_t len,
-             const struct sockaddr_in &addr) {
-      { t.onAccept(sock, ip) };     // TCP 연결 SSL 안 씀
-      { t.newConnect(sock, ip) };   // TCP 연결 SSL 안 씀
-      { t.onRead(sock) };           // TCP 연결 로그인임
-      { t.onUDP(data, len, addr) }; // 채팅 메시지 받는 곳
-      { t.onDisconnect(sock) };     // 연결 끊긔
+             const struct sockaddr_in &addr, Network *net) {
+      { t.newConnect(sock, ip) } -> std::same_as<bool>; // TCP 연결 SSL 안 씀
+      { t.onTCP(net, sock) };                           // TCP 연결 로그인임
+      { t.onUDP(net, sock) };                           // 채팅 메시지 받는 곳
+      { t.offTCP(net, sock) };                          // TCP 연결 끊기
     };
 
 class Session {
@@ -46,7 +45,11 @@ public:
     }
     return net;
   }
-  int send(const std::string &msg, int fd);
+  std::string read(int fd);
+  int write(const std::string msg, int fd);
+  std::string recvfrom(int fd, struct sockaddr_in &dest_addr);
+  int sendto(int fd, const std::string &msg,
+             const struct sockaddr_in &src_addr);
   int sendUDP(const std::string &msg, const struct sockaddr_in &addr);
   int addUDP(size_t port);
   int addTCP(size_t port);
@@ -85,52 +88,34 @@ public:
           inet_ntop(AF_INET, &client_addr.sin_addr, ip_str, INET_ADDRSTRLEN);
           std::string client_ip(ip_str);
           // 클라이언트 소켓을 epoll에 등록
-          struct epoll_event ev;
-          ev.events = EPOLLIN;
-          ev.data.fd = clientFd;
-          epoll_ctl(epfd, EPOLL_CTL_ADD, clientFd, &ev);
-          client_fds.insert(clientFd);
           // SessionManager 콜백 호출
-          t.onAccept(clientFd, client_ip);
+          if (t.newConnect(clientFd, client_ip)) {
+            struct epoll_event ev;
+            ev.events = EPOLLIN;
+            ev.data.fd = clientFd;
+            epoll_ctl(epfd, EPOLL_CTL_ADD, clientFd, &ev);
+            client_fds.insert(clientFd);
+          }
           continue;
         }
         // 2. UDP 소켓인지 확인 (채팅 메시지 수신)
         auto udp_it = std::find(udp_fds.begin(), udp_fds.end(), fd);
         if (udp_it != udp_fds.end()) {
           // UDP 소켓 → 데이터 수신
-          char buffer[4096];
-          struct sockaddr_in sender_addr = {};
-          socklen_t addr_len = sizeof(sender_addr);
-          ssize_t recv_len =
-              recvfrom(fd, buffer, sizeof(buffer) - 1, 0,
-                       (struct sockaddr *)&sender_addr, &addr_len);
-          if (recv_len > 0) {
-            buffer[recv_len] = '\0';
-            t.onUDP(buffer, recv_len, sender_addr);
-          }
+          t.onUDP(this, fd);
           continue;
         }
         // 3. 클라이언트 TCP 소켓 (로그인/데이터 수신)
         if (client_fds.find(fd) != client_fds.end()) {
           // 연결 종료 또는 에러 체크
           if (ev_list[i].events & (EPOLLHUP | EPOLLERR)) {
-            t.onDisconnect(fd);
             removeClient(fd);
             continue;
           }
           // 데이터 수신 가능
           if (ev_list[i].events & EPOLLIN) {
             // peek로 연결 상태 확인
-            char peek_buf;
-            ssize_t peek_ret = recv(fd, &peek_buf, 1, MSG_PEEK);
-            if (peek_ret <= 0) {
-              // 연결 종료
-              t.onDisconnect(fd);
-              removeClient(fd);
-              continue;
-            }
-            // SessionManager 콜백 호출 (실제 read는 Session에서 수행)
-            t.onRead(fd);
+            t.onTCP(this, fd);
           }
         }
       }

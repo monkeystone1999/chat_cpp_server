@@ -50,8 +50,7 @@ public:
       std::cerr << "eventfd write 실패" << std::endl;
     }
   }
-  template<typename T, typename... Args>
-  void enqueue(T &&t, Args&& args) {
+  template <typename T, typename... Args> void enqueue(T &&t, Args &&...args) {
     {
       std::lock_guard<std::mutex> lock(queue_mutex);
       tasks.push(std::bind(std::forward<T>(t), std::forward<Args>(args)...));
@@ -63,56 +62,56 @@ public:
     }
   }
 
-    // 소멸자: 스레드 풀 운영을 중단하고 모든 워커 스레드를 안전하게 종료합니다.
-    ~ThreadPool() {
-      stop = true;
-      for (size_t i = 0; i < workers.size();
-           ++i) { // 모든 워커들 깨워서 종료시키기
-        uint64_t value = 1;
-        write(event_fd, &value, sizeof(value));
-      }
-      for (std::thread &worker : workers) {
-        if (worker.joinable()) {
-          worker.join();
-        }
-      }
-      close(event_fd);
+  // 소멸자: 스레드 풀 운영을 중단하고 모든 워커 스레드를 안전하게 종료합니다.
+  ~ThreadPool() {
+    stop = true;
+    for (size_t i = 0; i < workers.size();
+         ++i) { // 모든 워커들 깨워서 종료시키기
+      uint64_t value = 1;
+      write(event_fd, &value, sizeof(value));
     }
-
-  private:
-    // 워커 스레드가 실행하는 루프 함수입니다.
-    // 작업 큐에 작업이 들어올 때까지 대기(sleep)하다가, 작업이 들어오면
-    // 깨어나서 처리를 수행합니다.
-    void worker_thread() {
-      while (true) {
-        uint64_t value;
-        ssize_t ret = read(event_fd, &value, sizeof(value)); // 신호 대기
-        if (ret != sizeof(value)) {
-          std::cerr << "eventfd read 실패" << std::endl;
-          continue;
-        }
-        if (stop) { // 종료 확인
-          return;
-        }
-        std::function<void()> task;
-        bool has_task = false;
-        {
-          std::lock_guard<std::mutex> lock(queue_mutex);
-          if (!tasks.empty()) {
-            task = std::move(tasks.front());
-            tasks.pop();
-            has_task = true;
-          }
-        }
-        if (has_task) {
-          task();
-        }
+    for (std::thread &worker : workers) {
+      if (worker.joinable()) {
+        worker.join();
       }
     }
+    close(event_fd);
+  }
 
-    std::vector<std::thread> workers;
-    std::queue<std::function<void()>> tasks;
-    std::mutex queue_mutex;
-    std::atomic<bool> stop;
-    int event_fd;
-  };
+private:
+  // 워커 스레드가 실행하는 루프 함수입니다.
+  // 작업 큐에 작업이 들어올 때까지 대기(sleep)하다가, 작업이 들어오면
+  // 깨어나서 처리를 수행합니다.
+  void worker_thread() {
+    while (true) {
+      uint64_t value;
+      ssize_t ret = read(event_fd, &value, sizeof(value)); // 신호 대기
+      if (ret != sizeof(value)) {
+        std::cerr << "eventfd read 실패" << std::endl;
+        continue;
+      }
+      if (stop) { // 종료 확인
+        return;
+      }
+      std::function<void()> task;
+      bool has_task = false;
+      {
+        std::lock_guard<std::mutex> lock(queue_mutex);
+        if (!tasks.empty()) {
+          task = std::move(tasks.front());
+          tasks.pop();
+          has_task = true;
+        }
+      }
+      if (has_task) {
+        task();
+      }
+    }
+  }
+
+  std::vector<std::thread> workers;
+  std::queue<std::function<void()>> tasks;
+  std::mutex queue_mutex;
+  std::atomic<bool> stop;
+  int event_fd;
+};
