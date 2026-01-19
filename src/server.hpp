@@ -48,6 +48,13 @@ int Server::onTCP(Network *net, int sock) {
   /// 해당 IP 가 접속을 했었는지 확인
   /// 해당 로그인 정보가 정확한지 DB에 확인
   /// 결과 리턴
+  try {
+    threadPool.enqueue([this, net, sock]() {
+
+    });
+  } catch (...) {
+    return 0;
+  }
 }
 /// 메시지를 받는 곳
 int Server::onUDP(Network *net, int sock) {

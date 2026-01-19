@@ -53,7 +53,8 @@ public:
   template <typename T, typename... Args> void enqueue(T &&t, Args &&...args) {
     {
       std::lock_guard<std::mutex> lock(queue_mutex);
-      tasks.push(std::bind(std::forward<T>(t), std::forward<Args>(args)...));
+      tasks.push([f = std::forward<T>(t), ... args = std::forward<Args>(
+                                              args)]() mutable { f(args...); });
     }
     uint64_t value = 1;
     ssize_t ret = write(event_fd, &value, sizeof(value));
