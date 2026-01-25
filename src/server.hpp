@@ -70,5 +70,12 @@ bool Server::newConnect(int sock, const std::string &ip) {
   /// SSL 연결로 새로운 연결을 받기는 한다
   /// ip 를 특정한 위치에 저장을 함
   /// 인증서로 확인을 함
+  try {
+    threadPool.enqueue([this, net, sock]() {
+
+    });
+  } catch (...) {
+    return 0;
+  }
   return false;
 }
